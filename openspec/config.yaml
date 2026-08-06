@@ -5,3 +5,5 @@ context: |
   Tech stack: Monorepo contendo Node.js com Express.js e TypeScript (backend em Cloud Run), PostgreSQL (Supabase), Prisma (ORM), e React/Next.js com TypeScript (frontend em Vercel).
   Integração Futura: O backend será preparado para orquestrar chamadas seguras para a API do Google Gemini.
   Idioma: Todas as especificações, documentações e comentários devem ser redigidos em português do Brasil (pt-BR).
+  Testes: Toda nova funcionalidade, módulo ou alteração de arquitetura DEVE incluir testes automatizados correspondentes.
+  Documentação: Todas as novas rotas/controllers DEVEM incluir documentação OpenAPI/Swagger utilizando anotações JSDoc.
