@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +16,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
       const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -31,9 +33,8 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      // Handle successful login (e.g., store token, redirect to dashboard)
-      // For now, we will simulate a redirect
-      window.location.href = "/dashboard";
+      localStorage.setItem("token", data.token);
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Ocorreu um erro desconhecido.");
     } finally {

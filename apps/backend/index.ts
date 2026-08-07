@@ -1,3 +1,4 @@
+process.env.TZ = 'UTC';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 
@@ -14,6 +15,7 @@ app.use('/', swaggerUi.serve);
 app.get('/', swaggerUi.setup(swaggerDocs));
 
 import authRoutes from './src/modules/auth/auth.routes';
+import dashboardRoutes from './src/modules/dashboard/dashboard.routes';
 
 /**
  * @swagger
@@ -41,6 +43,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.listen(port, () => {
   console.log(`Backend server is running at http://localhost:${port}`);

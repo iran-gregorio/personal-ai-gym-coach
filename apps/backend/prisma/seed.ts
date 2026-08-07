@@ -29,6 +29,7 @@ async function main() {
       userId: user.id,
       order: 1,
       description: 'Peito e Tríceps',
+      tags: ['PEITO', 'TRÍCEPS'],
       exercises: {
         create: [
           {

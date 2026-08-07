@@ -24,6 +24,7 @@ model Workout {
   description String
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags        String[] @default([])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
