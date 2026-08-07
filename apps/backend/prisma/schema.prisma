@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,4 +13,67 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  workouts         Workout[]
+  workoutHistories WorkoutHistory[]
+}
+
+model Workout {
+  id          String   @id @default(uuid())
+  order       Int
+  description String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  exercises        WorkoutExercise[]
+  workoutHistories WorkoutHistory[]
+}
+
+model WorkoutExercise {
+  id              String   @id @default(uuid())
+  name            String
+  order           Int
+  sets            String
+  reps            String
+  restTimeSeconds Int
+  lastWeight      String?
+  workoutId       String
+  workout         Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  historyExercises WorkoutHistoryExercise[]
+}
+
+model WorkoutHistory {
+  id                         String   @id @default(uuid())
+  userId                     String
+  user                       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutId                  String?
+  workout                    Workout? @relation(fields: [workoutId], references: [id], onDelete: SetNull)
+  workoutDescriptionSnapshot String
+  executedAt                 DateTime
+  durationSeconds            Int
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  exercises WorkoutHistoryExercise[]
+}
+
+model WorkoutHistoryExercise {
+  id           String           @id @default(uuid())
+  historyId    String
+  history      WorkoutHistory   @relation(fields: [historyId], references: [id], onDelete: Cascade)
+  exerciseId   String?
+  exercise     WorkoutExercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
+  nameSnapshot String
+  setsSnapshot String
+  repsSnapshot String
+  weightUsed   String?
+  isCompleted  Boolean
+  order        Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 }
