@@ -56,8 +56,10 @@ export class DashboardService {
       const clientDateOnlyStr = clientDateStr;
 
       if (lastHistoryDateStr === clientDateOnlyStr) {
-        isCompletedToday = true;
-        // The workout of the day is the one they just did
+        if (lastHistory.durationSeconds > 0) {
+          isCompletedToday = true;
+        }
+        // The workout of the day is the one they just did or are currently doing
         if (lastHistory.workoutId) {
           nextWorkout = await prisma.workout.findUnique({
             where: { id: lastHistory.workoutId },

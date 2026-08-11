@@ -31,9 +31,12 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasFetched = React.useRef(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
+      if (hasFetched.current) return;
+      hasFetched.current = true;
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -224,7 +227,9 @@ export default function DashboardPage() {
                   <div className="bg-surface-container-low p-sm rounded-lg border border-white/20 col-span-2">
                     <div className="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase tracking-widest">ÚLTIMA DURAÇÃO</div>
                     <div className="font-data-display text-data-display text-primary">
-                      {data.workoutOfDay.lastDuration ? formatDuration(data.workoutOfDay.lastDuration) : '--'}
+                      {data.workoutOfDay.lastDuration === 0 
+                        ? 'Em Andamento' 
+                        : (data.workoutOfDay.lastDuration ? formatDuration(data.workoutOfDay.lastDuration) : '--')}
                     </div>
                   </div>
                 </div>
@@ -232,6 +237,7 @@ export default function DashboardPage() {
                 <div className="flex flex-col gap-4 pt-2">
                   <button 
                     disabled={data.workoutOfDay.isCompletedToday}
+                    onClick={() => router.push(`/dashboard/execute/${data.workoutOfDay?.id}`)}
                     className={`w-full font-headline-md text-headline-md py-3 rounded-full transition-colors flex justify-center items-center gap-2
                       ${data.workoutOfDay.isCompletedToday 
                         ? 'bg-surface-variant text-on-surface-variant cursor-not-allowed'
@@ -239,7 +245,10 @@ export default function DashboardPage() {
                       }
                     `}
                   >
-                    {data.workoutOfDay.isCompletedToday ? 'FINALIZADO' : 'INICIAR TREINO'}
+                    {data.workoutOfDay.isCompletedToday 
+                      ? 'FINALIZADO' 
+                      : (data.workoutOfDay.lastDuration === 0 ? 'CONTINUAR TREINO' : 'INICIAR TREINO')
+                    }
                   </button>
                   <button className="w-full bg-transparent border border-primary-fixed text-primary-fixed font-headline-md text-headline-md py-3 rounded-full hover:bg-surface-container-high transition-colors">
                     VER OUTROS TREINOS

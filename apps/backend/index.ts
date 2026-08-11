@@ -16,6 +16,7 @@ app.get('/', swaggerUi.setup(swaggerDocs));
 
 import authRoutes from './src/modules/auth/auth.routes';
 import dashboardRoutes from './src/modules/dashboard/dashboard.routes';
+import executionRoutes from './src/modules/execution/execution.routes';
 
 /**
  * @swagger
@@ -44,6 +45,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/execution', executionRoutes);
 
 app.listen(port, () => {
   console.log(`Backend server is running at http://localhost:${port}`);
