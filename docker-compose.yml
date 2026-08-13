@@ -13,5 +13,17 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql
 
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: gym_coach_backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./apps/backend/.env
+    depends_on:
+      - db
+
 volumes:
   pgdata:
