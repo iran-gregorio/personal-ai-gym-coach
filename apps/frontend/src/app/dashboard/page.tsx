@@ -171,10 +171,10 @@ export default function DashboardPage() {
         <section className="glass-panel rounded-xl overflow-hidden ai-glow relative bg-surface-container border border-white/10">
           
           {!data?.workoutOfDay ? (
-            <div className="p-gutter text-center py-12 flex flex-col items-center">
+            <div className="p-gutter text-center py-12 flex flex-col items-center w-full">
               <span className="material-symbols-outlined text-6xl text-primary-fixed mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 200" }}>fitness_center</span>
               <h3 className="font-headline-md text-headline-md text-primary mb-2">Nenhum treino encontrado</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">
+              <p className="font-body-md text-body-md text-on-surface-variant w-full max-w-xs sm:max-w-sm">
                 Você ainda não possui treinos cadastrados. Aguarde seu AI Coach gerar seu plano ou crie o seu primeiro treino para começar a jornada.
               </p>
             </div>
