@@ -36,3 +36,27 @@ Devido à arquitetura de monorepo, configuramos um script facilitador na raiz do
 ## Integração Futura (Gemini)
 
 O backend em Express está isolado propositalmente para atuar como o maestro das interações com o Google Gemini. Futuramente, ele será responsável por compilar o histórico de treinos e enviar um contexto rico para a IA gerar novos planos personalizados.
+
+## Deploy do Backend
+
+O backend está configurado para ser publicado no **Google Cloud Run**.
+
+1. Certifique-se de estar autenticado no `gcloud` (ou de possuir as credenciais configuradas no seu ambiente CI/CD).
+2. Execute o comando de deploy a partir do diretório `/apps/backend`:
+   ```bash
+   cd apps/backend
+   gcloud run deploy personal-ai-gym-backend \
+     --project=gen-lang-client-0186103350 \
+     --source=. \
+     --region=us-central1 \
+     --allow-unauthenticated \
+     --memory=512Mi \
+     --cpu=1 \
+     --min-instances=0 \
+     --max-instances=10 \
+     --concurrency=80 \
+     --cpu-boost \
+     --update-secrets="DATABASE_URL=GYM_COACH_DATABASE_URL:latest,DIRECT_URL=GYM_COACH_DIRECT_URL:latest"
+   ```
+
+*O Cloud Build vai utilizar o `Dockerfile` existente na pasta `apps/backend`, construir a imagem e publicá-la automaticamente. As credenciais do banco de dados são injetadas através do Secret Manager do GCP.*
