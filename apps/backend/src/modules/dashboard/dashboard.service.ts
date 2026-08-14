@@ -11,6 +11,22 @@ export class DashboardService {
     const weekEnd = endOfWeek(clientDate, { weekStartsOn: 1 }); // Sunday
     const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
+    // 1.1 e 1.2: Check if user has any workouts at all before proceeding
+    const totalWorkouts = await prisma.workout.count({
+      where: { userId },
+    });
+
+    if (totalWorkouts === 0) {
+      // Retornar um payload vazio/padrão válido caso não existam treinos
+      return {
+        weekProgress: days.map((day: Date) => ({
+          date: day.toISOString(),
+          isCompleted: false,
+        })),
+        workoutOfDay: null,
+      };
+    }
+
     // Fetch histories for the week, plus some buffer for timezone shifts
     const weekHistories = await prisma.workoutHistory.findMany({
       where: {

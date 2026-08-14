@@ -9,6 +9,7 @@ jest.mock('../../prisma', () => ({
       count: jest.fn(),
     },
     workout: {
+      count: jest.fn(),
       findFirst: jest.fn(),
       findUnique: jest.fn(),
     }
@@ -21,6 +22,7 @@ describe('DashboardService', () => {
   });
 
   it('should return empty workoutOfDay if no history and no workouts exist', async () => {
+    (prisma.workout.count as jest.Mock).mockResolvedValue(0);
     (prisma.workoutHistory.findFirst as jest.Mock).mockResolvedValue(null);
     (prisma.workout.findFirst as jest.Mock).mockResolvedValue(null);
     (prisma.workoutHistory.findMany as jest.Mock).mockResolvedValue([]);
@@ -34,6 +36,8 @@ describe('DashboardService', () => {
   it('should return nextWorkout if history exists but not completed today', async () => {
     const mockClientDate = new Date('2023-10-25T10:00:00.000Z');
     
+    (prisma.workout.count as jest.Mock).mockResolvedValue(1);
+
     // Last history was yesterday
     (prisma.workoutHistory.findFirst as jest.Mock).mockImplementation((args) => {
       if (args.where?.workoutId) {
@@ -69,6 +73,8 @@ describe('DashboardService', () => {
   it('should return the same workout marked as completed if history is from today', async () => {
     const mockClientDate = new Date('2023-10-25T10:00:00.000Z');
     
+    (prisma.workout.count as jest.Mock).mockResolvedValue(1);
+
     // Last history was today
     (prisma.workoutHistory.findFirst as jest.Mock).mockImplementation((args) => {
       if (args.where?.workoutId) {
@@ -80,6 +86,7 @@ describe('DashboardService', () => {
       }
       return Promise.resolve({
         workoutId: 'w-1',
+        durationSeconds: 3600, // Fixed: adding this so isCompletedToday becomes true
         executedAt: new Date('2023-10-25T08:00:00.000Z'), // today early
         workout: { order: 1 }
       });
