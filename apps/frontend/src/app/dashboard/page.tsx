@@ -250,7 +250,10 @@ export default function DashboardPage() {
                       : (data.workoutOfDay.lastDuration === 0 ? 'CONTINUAR TREINO' : 'INICIAR TREINO')
                     }
                   </button>
-                  <button className="w-full bg-transparent border border-primary-fixed text-primary-fixed font-headline-md text-headline-md py-3 rounded-full hover:bg-surface-container-high transition-colors">
+                  <button 
+                    onClick={() => router.push('/dashboard/workouts')}
+                    className="w-full bg-transparent border border-primary-fixed text-primary-fixed font-headline-md text-headline-md py-3 rounded-full hover:bg-surface-container-high transition-colors"
+                  >
                     VER OUTROS TREINOS
                   </button>
                 </div>
