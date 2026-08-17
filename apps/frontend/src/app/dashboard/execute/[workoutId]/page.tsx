@@ -32,6 +32,7 @@ export default function ExecuteWorkoutPage() {
   const [history, setHistory] = useState<WorkoutHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   // Timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -57,8 +58,8 @@ export default function ExecuteWorkoutPage() {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            workoutId, 
+          body: JSON.stringify({
+            workoutId,
             executedAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
           })
         });
@@ -75,10 +76,10 @@ export default function ExecuteWorkoutPage() {
 
         const result = await res.json();
         setHistory(result);
-        
+
         // Start the local timer counting up from the execution start time
-        const localTimeString = result.executedAt.endsWith('Z') 
-          ? result.executedAt.slice(0, -1) 
+        const localTimeString = result.executedAt.endsWith('Z')
+          ? result.executedAt.slice(0, -1)
           : result.executedAt;
         const startTime = new Date(localTimeString).getTime();
         setElapsedSeconds(Math.max(0, Math.floor((new Date().getTime() - startTime) / 1000)));
@@ -185,53 +186,48 @@ export default function ExecuteWorkoutPage() {
   const progressPercent = totalCount === 0 ? 0 : (completedCount / totalCount) * 100;
 
   return (
-    <div className="bg-background text-on-surface font-body-md min-h-screen pb-32">
+    <div className="bg-background text-on-surface font-body-md min-h-screen pb-16">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16 md:px-margin-desktop">
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/dashboard')} className="text-on-surface-variant cursor-pointer">
-            <span className="material-symbols-outlined">arrow_back</span>
-          </button>
-          <div className="font-headline-md text-headline-md uppercase">
-            {history.workoutDescriptionSnapshot}
+      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 h-16">
+        <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full">
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.push('/dashboard')} className="text-on-surface-variant cursor-pointer">
+              <span className="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div className="font-headline-md text-headline-md uppercase">
+              {history.workoutDescriptionSnapshot}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="font-label-caps text-label-caps text-primary-fixed hidden sm:inline-block">
+              {completedCount}/{totalCount}
+            </span>
+            {/* Timer */}
+            <div className="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-white/10">
+              <span className="material-symbols-outlined text-primary-fixed text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+              <span className="font-data-display text-[16px] text-primary">{formatTimer(elapsedSeconds)}</span>
+            </div>
           </div>
         </div>
-        
-        {/* Timer */}
-        <div className="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-white/10">
-          <span className="material-symbols-outlined text-primary-fixed text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
-          <span className="font-data-display text-[16px] text-primary">{formatTimer(elapsedSeconds)}</span>
+        {/* Progress Bar Line */}
+        <div className="absolute bottom-0 left-0 h-1 bg-surface-container-highest w-full">
+          <div
+            className="h-full bg-primary-fixed transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </header>
 
       <main className="pt-24 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto space-y-md">
-        
-        {/* Progress Bar */}
-        <section className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">
-              Progresso
-            </span>
-            <span className="font-label-caps text-label-caps text-primary-fixed">
-              {completedCount}/{totalCount}
-            </span>
-          </div>
-          <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-primary-fixed transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </section>
 
         {/* Exercises List */}
         <section className="space-y-4">
           {history.exercises.map((exercise) => (
-            <div 
-              key={exercise.id} 
-              className={`glass-panel p-4 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors ${
-                exercise.isCompleted ? 'border-primary-fixed bg-surface-container/50' : 'border-white/10 bg-surface-container'
-              }`}
+            <div
+              key={exercise.id}
+              className={`glass-panel p-4 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors ${exercise.isCompleted ? 'border-primary-fixed bg-surface-container/50' : 'border-white/10 bg-surface-container'
+                }`}
             >
               <div className="flex items-start gap-4">
                 <button
@@ -282,17 +278,45 @@ export default function ExecuteWorkoutPage() {
           ))}
         </section>
 
+        {/* Finish Button at the end of the list */}
+        <div className="mt-12 flex justify-center pb-12">
+          <button
+            onClick={() => setIsConfirmModalOpen(true)}
+            className="px-12 py-4 font-headline-md text-headline-md rounded-full transition-all flex justify-center items-center gap-2 bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim shadow-[0_0_20px_rgba(157,255,108,0.3)] min-w-[280px]"
+          >
+            FINALIZAR TREINO
+          </button>
+        </div>
       </main>
 
-      {/* Floating Action Button for Finish */}
-      <div className="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-background via-background/90 to-transparent flex justify-center pb-8 md:pb-12 pointer-events-none">
-        <button 
-          onClick={handleFinishWorkout}
-          className="pointer-events-auto px-12 py-4 font-headline-md text-headline-md rounded-full transition-all flex justify-center items-center gap-2 bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim shadow-[0_0_20px_rgba(157,255,108,0.3)] min-w-[280px]"
-        >
-          FINALIZAR TREINO
-        </button>
-      </div>
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface-container p-6 rounded-2xl max-w-md w-full border border-white/10 shadow-2xl">
+            <h2 className="font-headline-md text-headline-md text-primary mb-4">Finalizar Treino</h2>
+            <p className="font-body-md text-on-surface-variant mb-8">
+              Deseja realmente finalizar este treino?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-end">
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="px-6 py-3 rounded-full font-label-lg text-label-lg text-on-surface hover:bg-surface-container-highest transition-colors"
+              >
+                CANCELAR
+              </button>
+              <button
+                onClick={() => {
+                  setIsConfirmModalOpen(false);
+                  handleFinishWorkout();
+                }}
+                className="px-6 py-3 rounded-full font-label-lg text-label-lg bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim transition-colors"
+              >
+                SIM, FINALIZAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
