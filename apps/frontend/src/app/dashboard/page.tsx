@@ -39,6 +39,10 @@ export default function DashboardPage() {
       hasFetched.current = true;
       try {
         const token = localStorage.getItem('token');
+        
+        // SMOKE TEST
+        alert(`[SMOKE TEST] Token no localStorage ao iniciar: ${token ? 'EXISTE' : 'NULL'}`);
+        
         if (!token) {
           router.push('/');
           return;
@@ -55,6 +59,9 @@ export default function DashboardPage() {
         });
 
         if (res.status === 401) {
+          // SMOKE TEST
+          alert(`[SMOKE TEST] O backend rejeitou o token (Erro 401)`);
+          
           localStorage.removeItem('token');
           router.push('/');
           return;
