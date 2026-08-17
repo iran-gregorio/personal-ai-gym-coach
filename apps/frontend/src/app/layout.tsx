@@ -17,9 +17,23 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+};
+
 export const metadata: Metadata = {
   title: "AI Coach - Login",
   description: "Ambiente de Treinamento de Elite",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "AI Coach",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
