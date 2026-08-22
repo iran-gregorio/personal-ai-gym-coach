@@ -297,21 +297,21 @@ export default function ExecuteWorkoutPage() {
             <p className="font-body-md text-on-surface-variant mb-8">
               Deseja realmente finalizar este treino?
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-end">
+            <div className="flex flex-col-reverse sm:flex-row gap-4 justify-end mt-4">
               <button
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="px-6 py-3 rounded-full font-label-lg text-label-lg text-on-surface hover:bg-surface-container-highest transition-colors"
+                className="px-6 py-3 rounded-full font-body-md font-bold uppercase text-on-surface hover:bg-surface-container-highest transition-colors w-full sm:w-auto border border-white/10 sm:border-transparent"
               >
-                CANCELAR
+                Cancelar
               </button>
               <button
                 onClick={() => {
                   setIsConfirmModalOpen(false);
                   handleFinishWorkout();
                 }}
-                className="px-6 py-3 rounded-full font-label-lg text-label-lg bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim transition-colors"
+                className="px-6 py-3 rounded-full font-body-md font-bold uppercase bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim transition-colors w-full sm:w-auto text-center"
               >
-                SIM, FINALIZAR
+                Sim, Finalizar
               </button>
             </div>
           </div>
