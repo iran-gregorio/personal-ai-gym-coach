@@ -6,6 +6,7 @@ export interface Exercise {
   reps: string;
   restTimeSeconds: number;
   lastWeight?: string | null;
+  videoUrl?: string | null;
 }
 
 export interface Workout {

@@ -33,7 +33,10 @@ export class ExecutionService {
         }
       },
       include: {
-        exercises: { orderBy: { order: 'asc' } },
+        exercises: { 
+          orderBy: { order: 'asc' },
+          include: { exercise: true }
+        },
       },
     });
 
@@ -64,7 +67,9 @@ export class ExecutionService {
         },
       },
       include: {
-        exercises: true,
+        exercises: {
+          include: { exercise: true }
+        },
       },
     });
 
@@ -74,7 +79,12 @@ export class ExecutionService {
   async getExecution(userId: string, historyId: string) {
     const history = await prisma.workoutHistory.findUnique({
       where: { id: historyId },
-      include: { exercises: { orderBy: { order: 'asc' } } },
+      include: { 
+        exercises: { 
+          orderBy: { order: 'asc' },
+          include: { exercise: true }
+        } 
+      },
     });
 
     if (!history) {

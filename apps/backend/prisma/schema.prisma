@@ -40,6 +40,7 @@ model WorkoutExercise {
   reps            String
   restTimeSeconds Int
   lastWeight      String?
+  videoUrl        String?
   workoutId       String
   workout         Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())

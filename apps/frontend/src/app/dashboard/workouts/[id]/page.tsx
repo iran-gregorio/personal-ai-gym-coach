@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Workout } from '../../../../types/workout';
 import { useParams } from 'next/navigation';
+import { ExerciseVideoModal } from '../../../../components/ExerciseVideoModal';
 
 export default function WorkoutPreviewPage() {
   const router = useRouter();
@@ -12,6 +13,10 @@ export default function WorkoutPreviewPage() {
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Video Modal State
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
+  const [selectedVideoName, setSelectedVideoName] = useState<string>('');
 
   useEffect(() => {
     const fetchWorkout = async () => {
@@ -58,8 +63,23 @@ export default function WorkoutPreviewPage() {
     }
   }, [id, router]);
 
+  const openVideo = (url: string, name: string) => {
+    setSelectedVideoUrl(url);
+    setSelectedVideoName(name);
+  };
+
+  const closeVideo = () => {
+    setSelectedVideoUrl(null);
+  };
+
   return (
     <div className="bg-background text-on-surface font-body-md min-h-screen pb-32">
+      <ExerciseVideoModal 
+        isOpen={!!selectedVideoUrl}
+        onClose={closeVideo}
+        videoUrl={selectedVideoUrl}
+        exerciseName={selectedVideoName}
+      />
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16 md:px-margin-desktop">
         <button 
@@ -116,8 +136,18 @@ export default function WorkoutPreviewPage() {
                 <div className="flex flex-col gap-sm">
                   {workout.exercises.map((exercise, index) => (
                     <div key={exercise.id} className="bg-surface-container rounded-xl p-4 border border-white/10 flex flex-col gap-2">
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-start gap-4">
                         <h3 className="font-headline-md text-headline-md font-bold text-white uppercase">{index + 1}. {exercise.name}</h3>
+                        {exercise.videoUrl && (
+                          <button 
+                            onClick={() => openVideo(exercise.videoUrl!, exercise.name)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-bold uppercase tracking-wider shrink-0"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">play_circle</span>
+                            <span className="hidden sm:inline">Ver Execução</span>
+                            <span className="inline sm:hidden">Vídeo</span>
+                          </button>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
                         <div className="bg-surface-container-high p-2 rounded-lg flex flex-col items-center justify-center">

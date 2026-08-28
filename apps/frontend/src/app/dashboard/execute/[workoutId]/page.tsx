@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { format } from 'date-fns';
+import { ExerciseVideoModal } from '../../../../components/ExerciseVideoModal';
 
 interface WorkoutHistoryExercise {
   id: string;
@@ -13,6 +14,9 @@ interface WorkoutHistoryExercise {
   weightUsed: string | null;
   isCompleted: boolean;
   order: number;
+  exercise?: {
+    videoUrl?: string | null;
+  };
 }
 
 interface WorkoutHistory {
@@ -33,6 +37,10 @@ export default function ExecuteWorkoutPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  // Video Modal State
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
+  const [selectedVideoName, setSelectedVideoName] = useState<string>('');
 
   // Timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -162,6 +170,15 @@ export default function ExecuteWorkoutPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const openVideo = (url: string, name: string) => {
+    setSelectedVideoUrl(url);
+    setSelectedVideoName(name);
+  };
+
+  const closeVideo = () => {
+    setSelectedVideoUrl(null);
+  };
+
   if (loading && !history) {
     return (
       <div className="min-h-screen bg-background text-on-surface flex items-center justify-center">
@@ -187,6 +204,12 @@ export default function ExecuteWorkoutPage() {
 
   return (
     <div className="bg-background text-on-surface font-body-md min-h-screen pb-16">
+      <ExerciseVideoModal 
+        isOpen={!!selectedVideoUrl}
+        onClose={closeVideo}
+        videoUrl={selectedVideoUrl}
+        exerciseName={selectedVideoName}
+      />
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 h-16">
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full">
@@ -244,9 +267,20 @@ export default function ExecuteWorkoutPage() {
                   <h3 className={`font-headline-sm text-headline-sm uppercase ${exercise.isCompleted ? 'line-through text-on-surface-variant' : 'text-primary'}`}>
                     {exercise.nameSnapshot}
                   </h3>
-                  <p className="font-body-sm text-body-sm text-secondary-fixed-dim uppercase tracking-widest">
-                    {exercise.setsSnapshot} SÉRIES • {exercise.repsSnapshot} REPETIÇÕES
-                  </p>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-1">
+                    <p className="font-body-sm text-body-sm text-secondary-fixed-dim uppercase tracking-widest">
+                      {exercise.setsSnapshot} SÉRIES • {exercise.repsSnapshot} REPETIÇÕES
+                    </p>
+                    {exercise.exercise?.videoUrl && (
+                      <button 
+                        onClick={() => openVideo(exercise.exercise!.videoUrl!, exercise.nameSnapshot)}
+                        className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-[10px] font-bold uppercase tracking-wider shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">play_circle</span>
+                        <span>Ver Execução</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
