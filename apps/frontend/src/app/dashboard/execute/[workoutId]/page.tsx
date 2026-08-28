@@ -291,8 +291,8 @@ export default function ExecuteWorkoutPage() {
 
       {/* Confirmation Modal */}
       {isConfirmModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-surface-container p-6 rounded-2xl max-w-md w-full border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-container p-6 rounded-2xl w-[90%] max-w-[400px] border border-white/10 shadow-2xl">
             <h2 className="font-headline-md text-headline-md text-primary mb-4">Finalizar Treino</h2>
             <p className="font-body-md text-on-surface-variant mb-8">
               Deseja realmente finalizar este treino?
