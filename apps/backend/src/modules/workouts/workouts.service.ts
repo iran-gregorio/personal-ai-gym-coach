@@ -6,7 +6,9 @@ export class WorkoutsService {
       where: { userId },
       orderBy: { order: 'asc' },
       include: {
-        exercises: true,
+        exercises: {
+          orderBy: { order: 'asc' },
+        },
       },
     });
     return workouts;
@@ -16,7 +18,9 @@ export class WorkoutsService {
     const workout = await prisma.workout.findFirst({
       where: { id, userId },
       include: {
-        exercises: true,
+        exercises: {
+          orderBy: { order: 'asc' },
+        },
       },
     });
     return workout;

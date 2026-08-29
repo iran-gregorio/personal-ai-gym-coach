@@ -4,7 +4,11 @@ export class ExecutionService {
   async startWorkout(userId: string, workoutId: string, clientExecutedAt?: string) {
     const workout = await prisma.workout.findUnique({
       where: { id: workoutId },
-      include: { exercises: true },
+      include: {
+        exercises: {
+          orderBy: { order: 'asc' },
+        },
+      },
     });
 
     if (!workout) {
